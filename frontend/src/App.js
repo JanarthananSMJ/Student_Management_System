@@ -1,45 +1,64 @@
-import { Container, Grow, AppBar, Typography, Grid } from "@material-ui/core";
-import Student from "./components/showStudent/showStudent";
-import useStyles from "./styles"
-import CreateStudent from "./components/createStudent/createStudent";
-import "./App.css";
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
+import { ToastProvider } from './components/ui/Toast';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import DashboardLayout from './components/layout/DashboardLayout';
+
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+import StudentsListPage from './pages/StudentsListPage';
+import StudentFormPage from './pages/StudentFormPage';
+import StudentDetailPage from './pages/StudentDetailPage';
+import StaffListPage from './pages/StaffListPage';
+import StaffFormPage from './pages/StaffFormPage';
+import StaffDetailPage from './pages/StaffDetailPage';
+import AcademicsPage from './pages/AcademicsPage';
+import ProfilePage from './pages/ProfilePage';
+import UsersPage from './pages/UsersPage';
+import NotFoundPage from './pages/NotFoundPage';
+
+function LoginRoute() {
+  const { user } = useAuth();
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return <LoginPage />;
+}
 
 function App() {
-  const classes = useStyles();
   return (
-    <div className="App">
-      <Container max-width="lg">
-        <AppBar className={classes.appBar} position="static" color="inherit">
-          <Typography className={classes.heading} variant="h2" align="center">
-            Student Management System
-          </Typography>
-        </AppBar>
-        <Grow in>
-          <Container>
-            <Grid container justify="space-between" alignItems="stretch">
-              <Grid item xs={12} sm={7}>
-                <AppBar
-                  className={classes.appBar}
-                  position="static"
-                  color="inherit"
-                >
-                  <Student />
-                </AppBar>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-              <AppBar
-                  className={classes.appBar}
-                  position="static"
-                  color="inherit"
-                >
-                  <CreateStudent />
-                </AppBar>
-              </Grid>
-            </Grid>
-          </Container>
-        </Grow>
-      </Container>
-    </div>
+    <ToastProvider>
+      <Routes>
+        <Route path="/login" element={<LoginRoute />} />
+
+        <Route element={<ProtectedRoute />}>
+          <Route element={<DashboardLayout />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+
+            <Route element={<ProtectedRoute allowedRoles={['admin', 'staff']} />}>
+              <Route path="/students" element={<StudentsListPage />} />
+              <Route path="/students/:id" element={<StudentDetailPage />} />
+            </Route>
+
+            <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+              <Route path="/students/new" element={<StudentFormPage />} />
+              <Route path="/students/:id/edit" element={<StudentFormPage />} />
+              <Route path="/staff" element={<StaffListPage />} />
+              <Route path="/staff/new" element={<StaffFormPage />} />
+              <Route path="/staff/:id" element={<StaffDetailPage />} />
+              <Route path="/staff/:id/edit" element={<StaffFormPage />} />
+              <Route path="/academics/*" element={<AcademicsPage />} />
+              <Route path="/users" element={<UsersPage />} />
+            </Route>
+          </Route>
+        </Route>
+
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </ToastProvider>
   );
 }
 
