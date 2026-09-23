@@ -6,7 +6,11 @@
   "scripts": {
     "start": "nodemon .",
     "dev": "nodemon .",
-    "seed:admin": "node scripts/seedAdmin.js"
+    "seed:admin": "node scripts/seedAdmin.js",
+    "seed:departments": "node scripts/seedDepartments.js",
+    "seed:academic-years": "node scripts/seedAcademicYears.js",
+    "seed:courses": "node scripts/seedCourses.js",
+    "seed:class-sections": "node scripts/seedClassSections.js"
   },
   "repository": {
     "type": "git",
