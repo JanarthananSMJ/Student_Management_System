@@ -189,12 +189,17 @@ export default function StaffForm({ mode = 'create', initialData, onSubmit, subm
                 </option>
               ))}
             </Select>
-            <Input
+            <Select
               label="Designation"
               value={form.designation}
               onChange={(e) => setField('designation', e.target.value)}
+              placeholder="Select designation"
               disabled={mode === 'edit'}
-            />
+            >
+              <option value="HOD">HOD</option>
+              <option value="Professor">Professor</option>
+              <option value="Assistant Professor">Assistant Professor</option>
+            </Select>
             <Input
               label="Joining Date"
               type="date"

@@ -15,6 +15,19 @@ export default function Table({
   filters,
   rowKey = '_id',
 }) {
+  // Spread columns across the full table width: first real column hugs the
+  // left edge, the last real column (before any trailing actions column)
+  // hugs the right edge, and anything in between is centered.
+  const realIdxs = columns.map((c, i) => (c.key === 'actions' ? -1 : i)).filter((i) => i !== -1);
+  const firstIdx = realIdxs[0];
+  const lastIdx = realIdxs[realIdxs.length - 1];
+  const alignClass = (idx, key) => {
+    if (key === 'actions') return 'text-right';
+    if (idx === firstIdx) return 'text-left';
+    if (idx === lastIdx) return 'text-right';
+    return 'text-center';
+  };
+
   return (
     <div className="flex flex-col gap-3">
       {(searchable || filters) && (
@@ -38,10 +51,13 @@ export default function Table({
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              {columns.map((col) => (
+              {columns.map((col, idx) => (
                 <th
                   key={col.key}
-                  className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
+                  className={`whitespace-nowrap px-10 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500 ${alignClass(
+                    idx,
+                    col.key,
+                  )}`}
                 >
                   {col.header}
                 </th>
@@ -64,8 +80,11 @@ export default function Table({
             ) : (
               data.map((row, idx) => (
                 <tr key={row[rowKey] || idx} className="hover:bg-gray-50">
-                  {columns.map((col) => (
-                    <td key={col.key} className="whitespace-nowrap px-4 py-3 text-sm text-gray-700">
+                  {columns.map((col, idx) => (
+                    <td
+                      key={col.key}
+                      className={`whitespace-nowrap px-10 py-3 text-sm text-gray-700 ${alignClass(idx, col.key)}`}
+                    >
                       {col.render ? col.render(row) : row[col.key]}
                     </td>
                   ))}

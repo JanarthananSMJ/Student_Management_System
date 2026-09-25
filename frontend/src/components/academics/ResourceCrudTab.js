@@ -103,7 +103,7 @@ export default function ResourceCrudTab({ resourceLabel, api, columns, fields, b
           key: 'actions',
           header: '',
           render: (row) => (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center justify-end gap-1">
               <button
                 className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100"
                 onClick={() => openEdit(row)}
